@@ -1,4 +1,4 @@
-# PsRules - Blog Post
+# PSRule - Blog Post
 
 ## Introduction
 
@@ -22,14 +22,14 @@ There's a few different levels to testing IAC templates, the below table explain
 | Level | Title | Description | How |
 | -- | -- | -- | -- |
 | Basic | Template validation | For IAC templates to work, they need to be valid. This could be as simple as checking the JSON structure for an ARM template and Parameter file. Or running the `bicep build` command to verify the bicep modules can correctly render into an ARM template. | - Bicep: Use `bicep build` on all `.bicep` files in the repository (find the files and do a foreach loop). <br> - ARM: Validate the ARM template and Parameter file is valid JSON. |
-| Intermediate | Compare against the Well Architected Framework (WAF) | By Validating the IAC templates pass the standards outlined in the WAF it enables organisations to analyize their templates for best practices against the 5 WAF pillars (cost, security, reliability, operational excellence and performance). These findings can help to improve the quality of your IAC templates and help detect security or reliability risks before they're implemented (`by testing on the left (in the pipeline)`). | ARM & Bicep: [PsRules For Azure](https://azure.github.io/PSRule.Rules.Azure/about/). |
-| Advanced | Validate IAC against your organisations standards | Each organisation has a different set of recommendations and standards. However it can be challenging to enforce these standards. For the most part these standards are either enforced in the IAC template or just documented. What if there was a tool that allows you to create rules to help enforce these standards (for free?!) | ARM & Bicep: [PSRules](https://microsoft.github.io/PSRule/v2/quickstart/standalone-rule/). |
+| Intermediate | Compare against the Well Architected Framework (WAF) | By Validating the IAC templates pass the standards outlined in the WAF it enables organisations to analyize their templates for best practices against the 5 WAF pillars (cost, security, reliability, operational excellence and performance). These findings can help to improve the quality of your IAC templates and help detect security or reliability risks before they're implemented (`by testing on the left (in the pipeline)`). | ARM & Bicep: [PSRule For Azure](https://azure.github.io/PSRule.Rules.Azure/about/). |
+| Advanced | Validate IAC against your organisations standards | Each organisation has a different set of recommendations and standards. However it can be challenging to enforce these standards. For the most part these standards are either enforced in the IAC template or just documented. What if there was a tool that allows you to create rules to help enforce these standards (for free?!) | ARM & Bicep: [PSRule](https://microsoft.github.io/PSRule/v2/quickstart/standalone-rule/). |
 
-In this blog post we're going to focus on using **PsRules for Azure**. A blog post will be written in the future for **PsRules**, however for more information, please use the link provided below.
+In this blog post we're going to focus on using **PSRule for Azure**. A blog post will be written in the future for **PSRule**, however for more information, please use the link provided below.
 
-### PsRules For Azure - (Intermediate)
+### PSRule For Azure - (Intermediate)
 
-So we now know that PsRules for Azure can verify our IAC templates against best practices. But what is it scanning for? Well, it includes over 260 rules that it evaluates for. For a list of what is evaluated [click here](https://azure.github.io/PSRule.Rules.Azure/en/rules/module/). 
+So we now know that PSRule for Azure can verify our IAC templates against best practices. But what is it scanning for? Well, it includes over 260 rules that it evaluates for. For a list of what is evaluated [click here](https://azure.github.io/PSRule.Rules.Azure/en/rules/module/). 
 
 Finally, let's dive into how to use this tool!
 
@@ -42,21 +42,21 @@ The following platforms are supported:
 
 #### Step 1 - Installation
 
-PsRules for Azure can be installed locally by running the following commands in a PowerShell terminal:
+PSRule for Azure can be installed locally by running the following commands in a PowerShell terminal:
 
 To install PSRule for Azure for the current user use:
 
-    ```powershell
-    Install-Module -Name 'PsRule' -Repository PSGallery -Scope CurrentUser -Force
-    Install-Module -Name 'PSRule.Rules.Azure' -Repository PSGallery -Scope CurrentUser -Force
-    ```
+```powershell
+Install-Module -Name 'PsRule' -Repository PSGallery -Scope CurrentUser -Force
+Install-Module -Name 'PSRule.Rules.Azure' -Repository PSGallery -Scope CurrentUser -Force
+```
 
-To enable these new modules for the current user use:
+To update these modules for the current user use:
 
-    ```powershell
-    Update-Module -Name 'PSRule'
-    Update-Module -Name 'PSRule.Rules.Azure'
-    ```
+```powershell
+Update-Module -Name 'PSRule'
+Update-Module -Name 'PSRule.Rules.Azure'
+```
 
 > *Note:* For the full installation instructions (local, Azure Devops & GitHub) use this [link](https://azure.github.io/PSRule.Rules.Azure/install-instructions/#installation)
 
@@ -64,45 +64,45 @@ To enable these new modules for the current user use:
 
 Now that the tool is installed we can start preparing to scan our IAC templates. Below is the code for the template I will be scanning in this demo ([link](https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/quickstarts/microsoft.storage/storage-account-create/main.bicep)):
 
-    ```bicep
-    // Deploy storage account
-    @description('Storage Account type')
-    @allowed([
-        'Premium_LRS'
-        'Premium_ZRS'
-        'Standard_GRS'
-        'Standard_GZRS'
-        'Standard_LRS'
-        'Standard_RAGRS'
-        'Standard_RAGZRS'
-        'Standard_ZRS'
-    ])
-    param storageAccountType string = 'Standard_LRS'
+```bicep
+// Deploy storage account
+@description('Storage Account type')
+@allowed([
+    'Premium_LRS'
+    'Premium_ZRS'
+    'Standard_GRS'
+    'Standard_GZRS'
+    'Standard_LRS'
+    'Standard_RAGRS'
+    'Standard_RAGZRS'
+    'Standard_ZRS'
+])
+param storageAccountType string = 'Standard_LRS'
 
-    @description('Location for the storage account.')
-    param location string = resourceGroup().location
+@description('Location for the storage account.')
+param location string = resourceGroup().location
 
-    @description('The name of the Storage Account')
-    param storageAccountName string = 'store${uniqueString(resourceGroup().id)}'
+@description('The name of the Storage Account')
+param storageAccountName string = 'store${uniqueString(resourceGroup().id)}'
 
-    resource sa 'Microsoft.Storage/storageAccounts@2021-06-01' = {
-    name: storageAccountName
-    location: location
-    sku: {
-        name: storageAccountType
-    }
-    kind: 'StorageV2'
-    properties: {}
-    }
+resource sa 'Microsoft.Storage/storageAccounts@2021-06-01' = {
+name: storageAccountName
+location: location
+sku: {
+    name: storageAccountType
+}
+kind: 'StorageV2'
+properties: {}
+}
     ```
 
 This file is available locally on my device in a folder called `examples`. Before we can test the Bicep module we need to test create a file called `ps-rule.yaml` with the following content:
 
-    ```yaml
-    # YAML: Enable expansion for Bicep source files.
-    configuration:
-    AZURE_BICEP_FILE_EXPANSION: true
-    ```
+```yaml
+## YAML: Enable expansion for Bicep source files.
+configuration:
+  AZURE_BICEP_FILE_EXPANSION: true
+```
 
 #### Step 3 - Scanning a template
 
@@ -114,7 +114,7 @@ Invoke-PSRule -InputPath 'examples/' -Module 'PSRule.Rules.Azure' -As Summary
 
 This provides a summary of what rules were evaluated against the IAC template in your `InputPath` (the example uses the `examples/` directory).
 
-![psrules-azure-summary](../.images/ps-rules-summary-output.png)
+![PSRule-azure-summary](../.images/ps-rules-summary-output.png)
 
 This provides a great overview and insights into the health of all of your IAC templates. But, let's dive a little deeper and look for results for each template.
 
@@ -124,7 +124,7 @@ Invoke-PSRule -InputPath 'examples/' -Module 'PSRule.Rules.Azure'
 
 By default the command will output a list of findings:
 
-![psrules-azure-scan-default](../.images/psrules-azure-scan.png)
+![PSRule-azure-scan-default](../.images/PSRule-azure-scan.png)
 
 Out of the box we've got a set of recommendations for this template. It's that easy. We can then read through the list of recommendations and uplift our IAC.
 
@@ -132,13 +132,13 @@ Out of the box we've got a set of recommendations for this template. It's that e
 
 ## Additional Documentation
 
-If you're interested in learning more about PsRules use the below links:
+If you're interested in learning more about PSRule use the below links:
 
-- [PsRules](https://microsoft.github.io/PSRule/v2/quickstart/standalone-rule/)
-- [PsRules for Azure](https://azure.github.io/PSRule.Rules.Azure/about/)
+- [PSRule](https://microsoft.github.io/PSRule/v2/quickstart/standalone-rule/)
+- [PSRule for Azure](https://azure.github.io/PSRule.Rules.Azure/about/)
 - [Azure - WAF](https://docs.microsoft.com/en-us/azure/architecture/framework/)
-- [PsRules For Azure - Quick Start Repo](https://github.com/Azure/PSRule.Rules.Azure-quickstart)
+- [PSRule For Azure - Quick Start Repo](https://github.com/Azure/PSRule.Rules.Azure-quickstart)
 
 ## Kudos
 
-These tools are written and maintained by [Bernie White](https://www.linkedin.com/in/bernie-white/). If you're interested in getting involved in the projects you can start by going here [PsRules For Azure](https://github.com/Azure/PSRule.Rules.Azure/blob/main/CONTRIBUTING.md)  | [PsRules](https://github.com/microsoft/ps-rule/blob/main/CONTRIBUTING.md)
+These tools are written and maintained by [Bernie White](https://www.linkedin.com/in/bernie-white/). If you're interested in getting involved in the projects you can start by going here [PSRule For Azure](https://github.com/Azure/PSRule.Rules.Azure/blob/main/CONTRIBUTING.md)  | [PSRule](https://github.com/microsoft/ps-rule/blob/main/CONTRIBUTING.md)
