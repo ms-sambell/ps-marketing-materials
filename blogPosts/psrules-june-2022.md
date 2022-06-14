@@ -29,9 +29,9 @@ In this blog post we're going to focus on using **PSRule for Azure**. A blog pos
 
 ### PSRule For Azure - (Intermediate)
 
-So we now know that PSRule for Azure can verify our IAC templates against best practices. But what is it scanning for? Well, it includes over 260 rules that it evaluates for. For a list of what is evaluated [click here](https://azure.github.io/PSRule.Rules.Azure/en/rules/module/). 
+So we now know that PSRule for Azure can verify our IAC templates against best practices. But what is it scanning for? Well, it includes over 260 rules that it evaluates for. For a list of what is evaluated [click here](https://azure.github.io/PSRule.Rules.Azure/en/rules/module/).
 
-Finally, let's dive into how to use this tool!
+Finally, let's dive into how to use this tool locally!
 
 #### Requirements
 
@@ -124,11 +124,28 @@ Invoke-PSRule -InputPath 'examples/' -Module 'PSRule.Rules.Azure'
 
 By default the command will output a list of findings:
 
-![PSRule-azure-scan-default](../.images/PSRule-azure-scan.png)
+![PSRule-azure-scan-default](../.images/psrules-azure-scan.png)
 
 Out of the box we've got a set of recommendations for this template. It's that easy. We can then read through the list of recommendations and uplift our IAC.
 
 > *Note:* For additional testing instructions: [bicep](https://azure.github.io/PSRule.Rules.Azure/using-bicep/) or [ARM](https://azure.github.io/PSRule.Rules.Azure/using-templates/)
+
+### Next Steps
+
+The demo provides a quick walkthrough on running PSRule for Azure locally, but what else can I do with it?
+
+- [Azure DevOps Pipelines](https://azure.github.io/PSRule.Rules.Azure/creating-your-pipeline/)
+- [GitHub Actions](https://azure.github.io/PSRule.Rules.Azure/creating-your-pipeline/)
+  - [Visualise PSRule results in GitHub StaticCode Analysis](https://microsoft.github.io/PSRule/v2/analysis-output/)
+- [VSCode Extension](https://microsoft.github.io/PSRule/v2/#visual-studio-code-extension)
+- [All Other CICD Systems](https://microsoft.github.io/PSRule/v2/scenarios/validation-pipeline/validation-pipeline/)
+- [Publish Results to Azure Monitor](https://azure.github.io/PSRule.Rules.Azure/setup/setup-azure-monitor-logs/)
+
+> *Tip:* The benefit of publishing the PsRule results to Azure Monitor is that you can build a workbook to visualise how your IAC template comply against WAF best practices and any improvements over time!
+
+### PSRule - (Advanced)
+
+PsRule allows you to write your own rules. This is a great way to validate naming conventions and organisation standards, before resources are deployed. This will be covered in more details in a future post, but for more information: https://microsoft.github.io/PSRule/v2/scenarios/azure-resources/azure-resources/
 
 ## Additional Documentation
 
