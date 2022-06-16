@@ -94,7 +94,7 @@ sku: {
 kind: 'StorageV2'
 properties: {}
 }
-    ```
+```
 
 This file is available locally on my device in a folder called `examples`. Before we can test the Bicep module we need to test create a file called `ps-rule.yaml` with the following content:
 
@@ -128,7 +128,10 @@ By default the command will output a list of findings:
 
 Out of the box we've got a set of recommendations for this template. It's that easy. We can then read through the list of recommendations and uplift our IAC.
 
-In some some instances you may need to exclude a rule from being assessed or suppress the rule for a specific resource. This can be done by following this [guide](https://microsoft.github.io/PSRule/v2/faq/#how-do-i-ignore-a-rule).
+In some some instances you may need to exclude a rule from being assessed or suppress the rule for a specific resource. 
+
+- [Exclude Or Suppress](https://microsoft.github.io/PSRule/v2/faq/#how-do-i-ignore-a-rule)
+- [Suppress Groups](https://microsoft.github.io/PSRule/v2/concepts/PSRule/en-US/about_PSRule_SuppressionGroups/)
 
 > *Note:* For additional testing instructions: [bicep](https://azure.github.io/PSRule.Rules.Azure/using-bicep/) or [ARM](https://azure.github.io/PSRule.Rules.Azure/using-templates/)
 
